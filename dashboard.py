@@ -5,9 +5,8 @@ import os
 import jinja2
 import webapp2
 import pytz
-import threading
 import logging
-from datetime import datetime
+import datetime
 
 JINJA = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -19,6 +18,7 @@ class Repository:
 
   def __init__(self):
     self.status = 'nodata'
+    self.last_success_utc = None
     self.subways = {}
 
   def clean_text(self, text):
@@ -53,9 +53,27 @@ class Repository:
       }
     self.subways = new_subways
     self.status = 'ok'
+    self.last_success_utc = datetime.datetime.utcnow()
 
 class SubwayPage(webapp2.RequestHandler):
   """Main page for MTA subway wall dashboard."""
+
+  def maybe_refresh_repo(self):
+    app = webapp2.get_app()
+    repo = app.registry.get('repo')
+    if not repo:
+      repo = Repository()
+      app.registry['repo'] = repo
+    timeout = datetime.timedelta(minutes=10)
+    now = datetime.datetime.utcnow()
+    if not repo.last_success_utc or now > repo.last_success_utc + timeout:
+      try:
+        logging.info('Starting repo load, status=%s' % repo.status)
+        repo.load()
+        logging.info('Successfully finished repo load, status=%s' % repo.status)
+      except:
+        logging.exception('Could not reload subway status.')
+    return repo
 
   def status_class(self, status):
     return {
@@ -63,9 +81,7 @@ class SubwayPage(webapp2.RequestHandler):
           'Delays': 'delays',
         }.get(status, 'work')
 
-  def render_page(self):
-    repo = Repository()
-    repo.load()
+  def render_page(self, repo):
     lines = []
     if repo.status == 'ok':
       for i in ['123', '456', '7', 'ACE', 'BDFM', 'G', 'JZ', 'L', 'NQRW', 'S']:
@@ -79,29 +95,15 @@ class SubwayPage(webapp2.RequestHandler):
     tz = pytz.timezone('US/Eastern')
 
     values = {
-      'current_time': datetime.now(tz).strftime('%I:%M %p'),
+      'current_time': datetime.datetime.now(tz).strftime('%I:%M %p'),
       'lines': lines,
     }
     template = JINJA.get_template('dashboard.html')
     return template.render(values)
 
   def get(self):
-    self.response.write(self.render_page())
-
-# repo = Repository()
-# timer = None
-
-def reload_and_schedule_timer():
-  try:
-    logging.info('Starting repo load, status=%s' % repo.status)
-    repo.load()
-    logging.info('Successfully finished repo load, status=%s' % repo.status)
-  except:
-    logging.exception('Could not reload subway status.')
-  timer = threading.Timer(600.0, reload_and_schedule_timer)
-  timer.start()
-
-# reload_and_schedule_timer()
+    repo = self.maybe_refresh_repo()
+    self.response.write(self.render_page(repo))
 
 app = webapp2.WSGIApplication([
     ('/', SubwayPage),
