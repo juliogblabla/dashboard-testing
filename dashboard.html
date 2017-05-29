@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 3vh;
+  margin: 0;
+  overflow: hidden;
+}
+.line-A,
+.line-C,
+.line-E,
+.line-B,
+.line-D,
+.line-F,
+.line-M,
+.line-G,
+.line-J,
+.line-Z,
+.line-L,
+.line-N,
+.line-Q,
+.line-R,
+.line-W,
+.line-S,
+.line-1,
+.line-2,
+.line-3,
+.line-4,
+.line-5,
+.line-6,
+.line-7
+{
+  display: inline-block;
+  font-family: Helvetica, sans-serif;
+  width: 1em;
+  height: 1em;
+  padding: .2em;
+  text-align: center;
+  font-weight: bold;
+  color: #FFF;
+  border-radius: 999px;
+  line-height: 1em;
+}
+.line-A,
+.line-C,
+.line-E {
+  background-color: #2850AD;
+}
+.line-B,
+.line-D,
+.line-F,
+.line-M {
+  background-color: #FF6319;
+}
+.line-G {
+  background-color: #6CBE45;
+}
+.line-J,
+.line-Z {
+  background-color: #996633;
+}
+.line-L {
+  background-color: #A7A9AC;
+}
+.line-N,
+.line-Q,
+.line-R,
+.line-W {
+  background-color: #FCCC0A; color: #333;
+}
+.line-S {
+  background-color: #808183;
+}
+.line-1,
+.line-2,
+.line-3 {
+  background-color: #EE352E;
+}
+.line-4,
+.line-5,
+.line-6 {
+  background-color: #00933C;
+}
+.line-7 {
+  background-color: #B933AD;
+}
+.logo {
+  display: inline-block;
+  background-color: #2850AD;
+  border-radius: 999px;
+  height: 1.6em;
+  width: 1.6em;
+  font-family: "Arial Black", sans-serif;
+  font-size: 2.5em;
+}
+.logo:after {
+  content: "MTA";
+  color: #fff;
+  transform-origin: 100% 50%;
+  transform: perspective(2.5em) rotateY(65deg) scaleY(0.6) scaleX(0.45) translateX(-2.03em);
+  display: block;
+}
+strong {
+  display: inline-block;
+  position: relative;
+  background: #000;
+  color: #fff;
+  font-family: Helvetica, sans-serif;
+  font-weight: bold;
+  padding: 2px 3px;
+  border-top: 2px solid #fff;
+}
+strong:before {
+  content: " ";
+  border-top: 3px solid black;
+  height: 0;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: -5px;
+}
+.TitleDelay,
+.TitlePlannedWork,
+.DateStyle {
+  display: none;
+}
+
+.clock {
+  background: #000;
+  color: #fff;
+  text-align: right;
+  line-height: 7vh;
+  padding: 0 1em;
+}
+
+.clock {
+  height: 7vh;
+}
+.error,
+.carousel {
+  height: 78vh;
+}
+.footer {
+  height: 15vh;
+  padding: 0 1em;
+}
+
+.name {
+  background: #fff;
+  text-align: right;
+  font-size: 4em;
+  padding: .4em .5em;
+}
+
+.status {
+  background: #fff;
+  font-weight: bold;
+  font-size: 4em;
+  padding: 0 .5em .1em .5em;
+}
+
+.status .delays {
+  color: #a00;
+}
+
+.status .good {
+  color: #060;
+}
+
+.status .work {
+  color: #960;
+}
+
+.text {
+  font-size: 1.5em;
+  background: #777;
+  color: #fff;
+  padding: .5em 1.4em;
+  min-height: 30vh;
+}
+.text a,
+.text a b u {
+  color: #fff;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+.footer {
+  font-size: 1em;
+  background: #777;
+  text-align: right;
+  clear: both;
+}
+.footer .logo {
+  background: #fff;
+}
+.footer .logo:after {
+  color: #777;
+}
+
+@keyframes carousel {
+  0% { transform: translateX(0); }
+  9% { transform: translateX(0); }
+  10% { transform: translateX(-10%); }
+  19% { transform: translateX(-10%); }
+  20% { transform: translateX(-20%); }
+  29% { transform: translateX(-20%); }
+  30% { transform: translateX(-30%); }
+  39% { transform: translateX(-30%); }
+  40% { transform: translateX(-40%); }
+  49% { transform: translateX(-40%); }
+  50% { transform: translateX(-50%); }
+  59% { transform: translateX(-50%); }
+  60% { transform: translateX(-60%); }
+  69% { transform: translateX(-60%); }
+  70% { transform: translateX(-70%); }
+  79% { transform: translateX(-70%); }
+  80% { transform: translateX(-80%); }
+  89% { transform: translateX(-80%); }
+  90% { transform: translateX(-90%); }
+  99% { transform: translateX(-90%); }
+}
+
+ul.carousel {
+  overflow: hidden;
+  background: #777;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  position: relative;
+  width: 1000%;
+  animation-name: carousel;
+  animation-duration: 120s;
+  animation-iteration-count: infinite;
+}
+
+ul.carousel > li {
+  float: left;
+  display: block;
+  width: 10%;
+}
+
+.error {
+  background: #a00;
+  color: #fff;
+  text-align: center;
+  font-size: 3em;
+  padding: 0 2em;
+  line-height: 1.6em;
+}
+
+</style>
+</head>
+<body>
+
+  <div class="clock">
+    {{ current_time }}
+  </div>
+
+  {% if lines %}
+    <ul class="carousel">
+
+      {% for line in lines %}
+        <li>
+          <div class="name">
+            {% for name in line.names %}
+              <span class="line-{{ name }}">{{ name }}</span>
+            {% endfor %}
+          </div>
+          <div class="status">
+            <span class="{{ line.status_class }}">{{ line.status }}</span>
+          </div>
+          <div class="text">
+            {{ line.info_html | safe }}
+          </div>
+        </li>
+      {% endfor %}
+
+    </ul>
+  {% else %}
+    <div class="error">
+      Ladies and gentlemen we are delayed due to a signal malfunction.
+      We apologize for any inconvenience. Thank you for your patience.
+    </div>
+  {% endif %}
+
+  <div class="footer">
+    <a href="http://mta.info"><span class="logo"></span></a>
+  </div>
+
+</body>
+</html>
