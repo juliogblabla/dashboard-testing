@@ -161,15 +161,15 @@ strong:before {
   padding: 0 .5em .1em .5em;
 }
 
-.status .delays {
+.delays {
   color: #a00;
 }
 
-.status .good {
+.good {
   color: #060;
 }
 
-.status .work {
+.work {
   color: #960;
 }
 
@@ -200,28 +200,31 @@ strong:before {
   color: #777;
 }
 
-@keyframes carousel {
-  0% { transform: translateX(0); }
-  9% { transform: translateX(0); }
-  10% { transform: translateX(-10%); }
-  19% { transform: translateX(-10%); }
-  20% { transform: translateX(-20%); }
-  29% { transform: translateX(-20%); }
-  30% { transform: translateX(-30%); }
-  39% { transform: translateX(-30%); }
-  40% { transform: translateX(-40%); }
-  49% { transform: translateX(-40%); }
-  50% { transform: translateX(-50%); }
-  59% { transform: translateX(-50%); }
-  60% { transform: translateX(-60%); }
-  69% { transform: translateX(-60%); }
-  70% { transform: translateX(-70%); }
-  79% { transform: translateX(-70%); }
-  80% { transform: translateX(-80%); }
-  89% { transform: translateX(-80%); }
-  90% { transform: translateX(-90%); }
-  99% { transform: translateX(-90%); }
-}
+{% if lines %}
+  {% set slide_count = lines|length + 1 %}
+
+  @keyframes carousel {
+    {% set step = 100.0 / slide_count %}
+    {% set pause = step / 10.0 %}
+    {% for i in range(slide_count) %}
+      {% set start = i * step %}
+      {% set end = start + step - pause %}
+      {{ '%.2f%% { transform: translateX(-%.2f%%); }' % (start, start) }}
+      {{ '%.2f%% { transform: translateX(-%.2f%%); }' % (end, start) }}
+    {% endfor %}
+  }
+
+  ul.carousel {
+    width: {{ '%.2f' % (slide_count * 100.0) }}%;
+    animation-name: carousel;
+    animation-duration: {{ slide_count * 10 }}s;
+    animation-iteration-count: infinite;
+  }
+
+  ul.carousel > li {
+    width: {{ '%.2f' % (100.0 / slide_count) }}%;
+  }
+{% endif %}
 
 ul.carousel {
   overflow: hidden;
@@ -230,16 +233,41 @@ ul.carousel {
   padding: 0;
   list-style-type: none;
   position: relative;
-  width: 1000%;
-  animation-name: carousel;
-  animation-duration: 120s;
-  animation-iteration-count: infinite;
 }
 
 ul.carousel > li {
   float: left;
   display: block;
-  width: 10%;
+  overflow: hidden;
+}
+
+ul.carousel > li > dl {
+  background: #fff;
+  padding: 1em;
+}
+
+@media (min-aspect-ratio: 4/3) {
+  ul.carousel > li > dl {
+    padding: 1em 28vw;
+  }
+}
+
+ul.carousel > li > dl,
+ul.carousel > li > dl > dt,
+ul.carousel > li > dl > dd {
+  margin: 0;
+  font-size: 1.1em;
+}
+ul.carousel > li > dl > dt {
+  float: left;
+  padding: 0.2em;
+}
+ul.carousel > li > dl > dd {
+  border-bottom: 1px solid #777;
+  clear: right;
+  padding: 0.32em 0 0.32em 8em;
+  font-weight: bold;
+  height: 1.2em;
 }
 
 .error {
@@ -261,6 +289,21 @@ ul.carousel > li {
 
   {% if lines %}
     <ul class="carousel">
+
+      <li>
+        <dl>
+          {% for line in lines %}
+            <dt>
+              {% for name in line.names %}
+                <span class="line-{{ name }}">{{ name }}</span>
+              {% endfor %}
+            </dt>
+            <dd>
+              <span class="{{ line.status_class }}">{{ line.status }}</span>
+            </dd>
+          {% endfor %}
+        </dl>
+      </li>
 
       {% for line in lines %}
         <li>
