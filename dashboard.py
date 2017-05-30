@@ -109,6 +109,14 @@ class SubwayPage(webapp2.RequestHandler):
     except ValueError:
       return 10
 
+  def get_refresh_sec(self):
+    param = self.request.get('refresh')
+    try:
+      refresh = int(param)
+      return min(refresh, 600)
+    except (TypeError, ValueError):
+      return None
+
   def render_page(self, repo):
     lines = []
     if repo.status == 'ok':
@@ -128,6 +136,7 @@ class SubwayPage(webapp2.RequestHandler):
       'lines': lines,
       'show_summary': self.get_show_summary(),
       'slide_duration_sec': self.get_slide_duration_sec(),
+      'refresh_sec': self.get_refresh_sec(),
     }
     template = JINJA.get_template('dashboard.html')
     return template.render(values)

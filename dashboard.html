@@ -2,6 +2,9 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{% if refresh_sec %}
+  <meta http-equiv="refresh" content="{{ refresh_sec }}" />
+{% endif %}
 <style>
 body {
   font-family: Helvetica, sans-serif;
