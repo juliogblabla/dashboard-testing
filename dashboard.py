@@ -13,6 +13,9 @@ JINJA = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+ALL_SUBWAY_LINES = ['123', '456', '7', 'ACE', 'BDFM',
+                    'G', 'JZ', 'L', 'NQRW', 'S']
+
 class Repository:
   """Reads MTA's service status URL, parses subway data."""
 
@@ -81,10 +84,24 @@ class SubwayPage(webapp2.RequestHandler):
           'Delays': 'delays',
         }.get(status, 'work')
 
+  def get_requested_lines(self):
+    lines = []
+    params = self.request.get('subway', allow_multiple=True)
+    for param in params:
+      for line in re.split(r'[\s+|,;]+', param):
+        line = line.upper()
+        if line in ALL_SUBWAY_LINES:
+          lines.append(line)
+    if lines:
+      return lines
+    else:
+      return ALL_SUBWAY_LINES
+
   def render_page(self, repo):
     lines = []
     if repo.status == 'ok':
-      for i in ['123', '456', '7', 'ACE', 'BDFM', 'G', 'JZ', 'L', 'NQRW', 'S']:
+      requested_lines = self.get_requested_lines()
+      for i in requested_lines:
         lines.append({
           'names': i,
           'status': repo.subways[i]['status'],
