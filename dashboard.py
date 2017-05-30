@@ -97,6 +97,10 @@ class SubwayPage(webapp2.RequestHandler):
     else:
       return ALL_SUBWAY_LINES
 
+  def get_show_summary(self):
+    param = self.request.get('summary', default_value='1')
+    return param.lower() in ['1', 'yes', 'y', 'true']
+
   def render_page(self, repo):
     lines = []
     if repo.status == 'ok':
@@ -114,6 +118,7 @@ class SubwayPage(webapp2.RequestHandler):
     values = {
       'current_time': datetime.datetime.now(tz).strftime('%I:%M %p'),
       'lines': lines,
+      'show_summary': self.get_show_summary(),
     }
     template = JINJA.get_template('dashboard.html')
     return template.render(values)

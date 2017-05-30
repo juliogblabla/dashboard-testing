@@ -202,7 +202,11 @@ strong:before {
 }
 
 {% if lines %}
-  {% set slide_count = lines|length + 1 %}
+  {% if show_summary %}
+    {% set slide_count = lines|length + 1 %}
+  {% else %}
+    {% set slide_count = lines|length %}
+  {% endif %}
 
   @keyframes carousel {
     {% set step = 100.0 / slide_count %}
@@ -291,20 +295,22 @@ ul.carousel > li > dl > dd {
   {% if lines %}
     <ul class="carousel">
 
-      <li>
-        <dl>
-          {% for line in lines %}
-            <dt>
-              {% for name in line.names %}
-                <span class="line-{{ name }}">{{ name }}</span>
-              {% endfor %}
-            </dt>
-            <dd>
-              <span class="{{ line.status_class }}">{{ line.status }}</span>
-            </dd>
-          {% endfor %}
-        </dl>
-      </li>
+      {% if show_summary %}
+        <li>
+          <dl>
+            {% for line in lines %}
+              <dt>
+                {% for name in line.names %}
+                  <span class="line-{{ name }}">{{ name }}</span>
+                {% endfor %}
+              </dt>
+              <dd>
+                <span class="{{ line.status_class }}">{{ line.status }}</span>
+              </dd>
+            {% endfor %}
+          </dl>
+        </li>
+      {% endif %}
 
       {% for line in lines %}
         <li>
