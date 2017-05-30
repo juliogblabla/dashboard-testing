@@ -101,6 +101,14 @@ class SubwayPage(webapp2.RequestHandler):
     param = self.request.get('summary', default_value='1')
     return param.lower() in ['1', 'yes', 'y', 'true']
 
+  def get_slide_duration_sec(self):
+    param = self.request.get('duration', default_value='10')
+    try:
+      duration = int(param)
+      return min(duration, 60)
+    except ValueError:
+      return 10
+
   def render_page(self, repo):
     lines = []
     if repo.status == 'ok':
@@ -119,6 +127,7 @@ class SubwayPage(webapp2.RequestHandler):
       'current_time': datetime.datetime.now(tz).strftime('%I:%M %p'),
       'lines': lines,
       'show_summary': self.get_show_summary(),
+      'slide_duration_sec': self.get_slide_duration_sec(),
     }
     template = JINJA.get_template('dashboard.html')
     return template.render(values)

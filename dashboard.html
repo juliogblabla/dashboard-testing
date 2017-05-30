@@ -222,7 +222,7 @@ strong:before {
   ul.carousel {
     width: {{ '%.2f' % (slide_count * 100.0) }}%;
     animation-name: carousel;
-    animation-duration: {{ slide_count * 10 }}s;
+    animation-duration: {{ slide_count * slide_duration_sec }}s;
     animation-iteration-count: infinite;
   }
 
